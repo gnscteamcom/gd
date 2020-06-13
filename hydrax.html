@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<!--
+SETUP HYDRAX PLAYER - Play this player via iframe embed.
+- Save as http://hydrax.net/hydrax.txt to hydrax.html
+- Edit hydrax.html, change "put-your-apikey-here" to your apiKey, you can get this key at Hydrax > Domain after add & verify domain
+- Upload hydrax.html to your hosting, like http://your-domain.com/hydrax.html
+=======
+
+SUPPORT PARAMS
+Hydrax slug video: slug
+Logo in player: logo
+Thumbnail: thumb
+Subtitle url: sub
+Subtitle name: sub-lang
+VAST ads: ads
+======= 
+
+HOW TO USE
+
+BASIC
+URL: http://your-domain.com/hydrax.html#slug={hydrax-slug}
+Example: http://hydrax.net/demo/hydrax.html#slug=5b285e60c15f1
+
+ADD LOGO IN PLAYER
+URL: http://your-domain.com/hydrax.html#slug{hydrax-slug}&logo={url-logo.png}
+Example: http://hydrax.net/demo/hydrax.html#slug=5b285e60c15f1&logo=http://hydrax.net/demo/logo.png
+
+ADD LOGO & THUMBNAIL
+URL: http://your-domain.com/hydrax.html#slug{hydrax-slug}&logo={url-logo.png}&thumb={url-logo.jpg}
+Example: http://hydrax.net/demo/hydrax.html#slug=5b285e60c15f1&logo=http://hydrax.net/demo/logo.png&thumb=http://hydrax.net/demo/thumbnail.png
+
+ADD LOGO, THUMBNAIL & SUBTITLE
+URL: http://your-domain.com/hydrax.html#slug={hydrax-slug}&sub={url-subtitle.vtt}&sub-lang={language-of-subtitle}
+Example: http://hydrax.net/demo/hydrax.html#slug=5b285e60c15f1&logo=http://hydrax.net/demo/logo.png&thumb=http://hydrax.net/demo/thumbnail.png&sub=http://hydrax.net/demo/bunny.vtt&sub-lang=English
+
+
+
+-->
+<html>
+	<head>
+		<title></title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+		<meta name="referrer" content="unsafe-url">
+		<link rel="icon" type="image/png" href="favicon.png">
+		<style rel="stylesheet">
+		body{
+			margin: 0;
+			padding: 0;
+			background-color: #000;
+			overflow: hidden;
+		}
+		#player{
+			width: 100%;
+			height: 100%;
+			margin-left: 0;
+			margin-right: 0;
+			margin-top: auto;
+			margin-bottom: auto;
+		}
+		.jwplayer{
+			position: static !important;
+		}
+		.jwplayer .jw-preview{
+			background-size: cover !important;
+		}
+		</style>
+		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+		<script type="text/javascript">
+      var getParam = function(param) {
+        var pReg = new RegExp(param + "\\=([^\\?&]+)", "i");
+        if (!pReg.test(window.location.href)) {
+          return '';
+        }
+        var pRes = pReg.exec(window.location.href);
+        return decodeURIComponent(pRes[1]);
+      }
+	  
+	  var isMobile = function() {
+		var userAgent = navigator['userAgent'];
+		//var android = userAgent['match'](/Android/i);
+		//var blackBerry = userAgent['match'](/BlackBerry/i);
+		var ios = userAgent['match'](/iPhone|iPad|iPod|Mac OS/i);
+		//var opera = userAgent['match'](/Opera Mini/i);
+		//var windows = userAgent['match'](/IEMobile/i) || userAgent['match'](/WPDesktop/i);
+
+		return ios;//(android || blackBerry || ios || opera || windows);
+	  }
+
+      var HYDRAX_SLUG = getParam("slug");
+      var HYDRAX_LOGO = getParam("logo");
+      var HYDRAX_THUMB = getParam("thumb");
+
+      var HYDRAX_SUB = getParam("sub");
+      var HYDRAX_SUB_LANG = getParam("sub-lang");
+      var HYDRAX_SUB_FRONT_SIZE = getParam("sub-size");
+
+      var HYDRAX_ADS = getParam("ads");
+
+		</script>
+	</head>
+	<body>
+
+<script src="//iamcdn.net/players/player.min.js"></script>
+<link rel="stylesheet" href="//iamcdn.net/players/player.min.css">
+<div id="player"><div id="loader"></div></div>
+<script>
+  var options = {
+    key: "put-your-apikey-here",
+    type: "slug",
+    value: HYDRAX_SLUG,
+    aspectratio: "16:9"
+  }
+
+  if(HYDRAX_THUMB) options.poster = HYDRAX_THUMB;
+  if(HYDRAX_LOGO) options.logo = { file: HYDRAX_LOGO, link: "#", hide: true, margin: "5px", position: "top-right" };
+  if(HYDRAX_SUB) options.tracks = [{ file: 'https://images2-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&refresh=60&url='+HYDRAX_SUB, label: HYDRAX_SUB_LANG || "Default", default: true }];
+  if(HYDRAX_ADS) options.advertising = { client: "vast", tag: HYDRAX_ADS };
+  
+  if(HYDRAX_SUB_FRONT_SIZE && isMobile())
+  var setCaptions = setInterval(function() {
+	  if(typeof jwplayer != 'undefined' && jwplayer) {
+		try {
+		  jwplayer().setCaptions({ fontSize: HYDRAX_SUB_FRONT_SIZE || 20 });
+		  clearInterval(setCaptions);
+		} catch (e) {}
+	  }
+	}, 500);
+
+  new Player(options)
+</script>
+</body>
+</html>
